@@ -1,6 +1,6 @@
 # Acerca del Autor
 
-![Aristides Villarreal](avbravo.png)
+![Aristides Villarreal](/resources/avbravo.png)
 
 [Aristides Villarreal Bravo](https://twitter.com/aristidesvbravo), nacio en Panamá.
 
