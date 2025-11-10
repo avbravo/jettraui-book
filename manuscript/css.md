@@ -1,15 +1,14 @@
 # CSS
 
 Usar Archivos CSS Propios (Archivos de Recursos Estáticos)
-Si deseas añadir tus propios estilos personalizados o incluir el archivo Bootstrap directamente en tu aplicación:
-Crea una carpeta de recursos: Coloca tu archivo CSS (ej. estilos.css) dentro de la carpeta src/main/webapp/css/.
-Referencia en el Java: Modifica el AppServlet.java para referenciar este archivo localmente.
-```java
-// En AppServlet.java, dentro del head:
-.conHijo(new Etiqueta("link")
-    .conAtributo("rel", "stylesheet")
-    .conAtributo("href", request.getContextPath() + "/css/estilos.css"))
 
+Si deseas añadir tus propios estilos personalizados o incluir el archivo Bootstrap directamente en tu aplicación:
+
+Crea una carpeta de recursos: Coloca tu archivo CSS (ej. estilos.css) dentro de la carpeta src/main/webapp/css/.
+
+
+```java
+Link link = new Link().rel("stylesheet").href(request.getContextPath() + "/css/estilos.css");
 ```
 
 El método request.getContextPath() asegura que la ruta al archivo CSS sea correcta, independientemente de cómo se despliegue tu aplicación Jakarta EE.
