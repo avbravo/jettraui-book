@@ -10,6 +10,7 @@ Se basa en un HTML completo.
 El primer paso seria descomponer el css dentro del html y lo añadimos a un archivo css. Siga las instrucciones
 de [css](css.md)
 
+[Componente Div](div.md)
 
 Para usar el archivo css que creamos implementamos
 
