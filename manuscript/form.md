@@ -1,10 +1,18 @@
-# GridCol
+# Form
 
-Se usan como un componente para un [Grid](grid.md) e [GridColCss](gridColCss.md)
+
+![](resources/form/00.png)
+
+Genera un formulario html
 
 ```java
+   Form mainForm = new Form().id("mainForm")
+                    .add(new InputRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
+                    .add(new InputRow("NHRC (Número de Historia Clínica)", "nhrc", "nhrc", TypeInput.TEXT, Boolean.TRUE, Boolean.FALSE))
+                    .add(new InputRow("Número de muestra", "numeromuestra", "numeromuestra", TypeInput.TEXT, Boolean.TRUE, Boolean.FALSE))
+                    .add(new InputRow("Edad del Paciente", "edad", "edad", TypeInput.NUMBER, Boolean.TRUE, Boolean.FALSE));
 
- Grid grid = new Grid();
+            Grid grid = new Grid();
             grid.add(new GridCol("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE));
             grid.add(new GridCol("Fecha de Registro3", "fechaRegistro3", "fechaRegistro3", TypeInput.DATE));
 
@@ -20,22 +28,5 @@ Se usan como un componente para un [Grid](grid.md) e [GridColCss](gridColCss.md)
 
 ```
 
-![](resources/grid/01.png)
 
 
-
-La clase GridCol tiene los siguientes constructores
-
-```java
-
-public GridCol(String label, String idAndName)
-
-public GridCol(String label, String id, String name)
-
-public GridCol(Label label, Tag input)
-
-public GridCol(String label, String id, String name, TypeInput typeInput)
-
-GridCol(String label, String id, String name, TypeInput typeInput, Boolean required, Boolean readonly)
-
-```
