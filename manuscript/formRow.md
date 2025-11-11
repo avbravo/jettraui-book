@@ -1,10 +1,10 @@
-# inputRow
+# formRow
 
-Un inputRow genera componentes Flowbite para  [Tailwind CSS Input Field - Flowbite](https://flowbite.com/docs/forms/input-field/)
+Un formRow genera componentes Flowbite para  [Tailwind CSS Input Field - Flowbite](https://flowbite.com/docs/forms/input-field/)
 
 Genera un elemento por fila compuesto de un Label y un Input
 
-![](resources/inputRow/00.png)
+![](resources/formRow/00.png)
 
 ```html
 <form>
@@ -23,26 +23,26 @@ Genera un elemento por fila compuesto de un Label y un Input
 ```
 
 
-La clase InputRow tiene los siguientes constructores
+La clase FormRow tiene los siguientes constructores
 
 ```java
 
 // Genera el mismo nombre para el id y name
 
-public InputRow(String label, String idAndName)
+public FormRow(String label, String idAndName)
 
 // Id y name Diferente
 
-public InputRow(String label, String id, String name)  
+public FormRow(String label, String id, String name)  
 
 
-public InputRow(String label, String id, String name, TypeInput typeInput)
+public FormRow(String label, String id, String name, TypeInput typeInput)
 
-public InputRow(String label, String id, String name, TypeInput typeInput, Boolean required, Boolean readonly) 
+public FormRow(String label, String id, String name, TypeInput typeInput, Boolean required, Boolean readonly) 
 
 // Puedes pasar directemente los objetos
 
-public InputRow(Label label, Tag input)
+public FormRow(Label label, Tag input)
 
 ```
 
@@ -56,23 +56,23 @@ public InputRow(Label label, Tag input)
 
 ```java
 
-.add(new InputRow("Telefono","telefono"))
+.add(new FormRow("Telefono","telefono"))
 
 
 ```
 
 
-![](resources/inputRow/01.png)
+![](resources/formRow/01.png)
 
 ## Utilizando enum [TypeInput](typeInput.md) define los tipos de elementos de entrada
 
-* [InputText](inputText.md)
 
-Usando InputRow
+
+Usando FormRow
 
 ```java
   Form mainForm = new Form().id("mainForm")
- .add(new InputRow("NHRC (Número de Historia Clínica)","nhrc", "nhrc", TypeInput.TEXT, Boolean.TRUE, Boolean.FALSE))
+ .add(new FormRow("NHRC (Número de Historia Clínica)","nhrc", "nhrc", TypeInput.TEXT, Boolean.TRUE, Boolean.FALSE))
 
 
 ```
@@ -84,39 +84,39 @@ Usando InputRow
 ```java
 
  Form mainForm = new Form().id("mainForm")
-      .add(new InputRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
+      .add(new FormRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
 
 
 ```
 
 
-![](resources/inputRow/02.png)
+![](resources/formRow/02.png)
 
 
-* Pasar los objetos y obtener los css desde   [InputRowCss](inputRowCss.md).
+* Pasar los objetos y obtener los css desde   [FormRowCss](formRowCss.md).
 
 Debe indicar el componente Label y el Input correspondiente.
 
 
 ```java
  Form mainForm = new Form().id("mainForm")
-           .add(new InputRow(
-                    new Label("Salud", InputRowCss.Label.css, "salud"),
-                    new InputText("salud", "salud", InputRowCss.Input.css).required(Boolean.TRUE)
+           .add(new FormRow(
+                    new Label("Salud", FormRowCss.Label.css, "salud"),
+                    new InputText("salud", "salud", FormRowCss.Input.css).required(Boolean.TRUE)
                     ));
 ```
 
 
-* Pasando los objetos directamente al InputRow asignando los css para label e inputText
+* Pasando los objetos directamente al FormRow asignando los css para label e inputText
 
-El InputRow tambien soporta que pases los objetos directamente.
+El FormRow tambien soporta que pases los objetos directamente.
 
 ```java
 String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
 String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 
  Form mainForm = new Form().id("mainForm")
-   .add(new InputRow(
+   .add(new FormRow(
                      new Label("Peso", labelClass, "peso"),
                      new InputText("peso", "peso", inputClass).required(Boolean.TRUE)
                     ));
@@ -128,7 +128,7 @@ String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rou
 
 ---
 
-## Sin usar InputRow añadiendo directamente usando un Div
+## Sin usar FormRow añadiendo directamente usando un Div
 
 ```java
 
@@ -143,7 +143,7 @@ String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rou
 ```
 
 
-Sin usar InputRow lo haria de la siguiente manera
+Sin usar FormRow lo haria de la siguiente manera
 
 ```java
 String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
@@ -151,7 +151,7 @@ String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rou
 
 
  Form mainForm = new Form().id("mainForm")
-        .add(new InputRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
+        .add(new FormRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
         .add(new Div("mb-6")
         .add(new Label("Fecha de Registro", labelClass, "fechaRegistro"))
         .add(new InputDate("fechaRegistro", "fechaRegistro", inputClass).required(Boolean.TRUE))

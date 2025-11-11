@@ -1,0 +1,2128 @@
+# Form con Div
+
+Muestra como pasar el html sin usar [Grid](grid.md) ni [FormRow](formRow.md)
+
+![](resources/formConDiv/00.png)
+
+
+Se basa en un HTML completo. 
+
+El primer paso seria descomponer el css dentro del html y lo añadimos a un archivo css. Siga las instrucciones
+de [css](css.md)
+
+
+Para usar el archivo css que creamos implementamos
+
+```java
+String contextPath = request.getContextPath();
+headers.add(new Tag("link").withAttribute("rel", "stylesheet").withAttribute("href", contextPath + "/css/microdetection.css"));
+```
+
+
+
+Puede observar que el codigo es mas grande que al usar Grid y FormRow.
+
+
+Puede optar por crear el formulario diseñando mediante Div directamente.
+
+```java
+import com.jmoordb.core.ui.Button;
+import com.jmoordb.core.ui.div.Div;
+import com.jmoordb.core.ui.FieldSet;
+import com.jmoordb.core.ui.form.Form;
+import com.jmoordb.core.ui.Label;
+import com.jmoordb.core.ui.Link;
+import com.jmoordb.core.ui.Span;
+import com.jmoordb.core.ui.Tag;
+import com.jmoordb.core.ui.WebComponent;
+import com.jmoordb.core.ui.dashboard.DashboardLayout;
+import com.jmoordb.core.ui.headings.H2;
+import com.jmoordb.core.ui.input.InputDate;
+import com.jmoordb.core.ui.input.InputNumber;
+import com.jmoordb.core.ui.input.InputRadio;
+import com.jmoordb.core.ui.input.InputText;
+import com.jmoordb.core.ui.jettra.JettraView;
+import com.jmoordb.core.ui.model.WebModelSession;
+import com.jmoordb.core.ui.panel.Panel;
+import fish.payara.config.ConfigurationProperties;
+import fish.payara.dashboard.MenuSideBar;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author avbravo
+ */
+@Path("analisis-view") // ⭐ Define la URL final: /api/profile-view
+@RequestScoped
+public class AnalisisView extends JettraView {
+    // <editor-fold defaultstate="collapsed" desc="attributes()">
+
+    WebModelSession webModelSession = new WebModelSession();
+    List<Tag> headers = new ArrayList<>();
+    @Inject
+    ConfigurationProperties configurationProperties;
+// </editor-fold>
+
+    @Override
+    protected String init() {
+        webModelSession = webModelOfSession(request);
+        String contextPath = request.getContextPath();
+        headers.add(new Tag("link").withAttribute("rel", "stylesheet").withAttribute("href", contextPath + "/css/microdetection.css"));
+
+        return DashboardLayout.buildPage(
+                request,
+                webModelSession.getUsername(),
+                content(request),
+                MenuSideBar.getSidebarSections(
+                        this.getClass().getSimpleName(),
+                        webModelSession
+                ),
+                "Profile View",
+                configurationProperties.getDashboardFooterText() + " | " + webModelSession.getUserRol(),
+                headers
+        );
+    }
+
+    @Override
+    protected WebComponent content(HttpServletRequest request) {
+        WebComponent mainContent = null;
+        try {
+            String labelClass = "block text-gray-700 text-sm font-bold mb-2 dark:text-white";
+            String inputClass = "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:border-gray-600 dark:text-white";
+            Form mainForm = new Form().id("mainForm");
+
+            Div divPatientData = new Div().id("patient-data")
+                    .add(new H2().text("Datos del Paciente"))
+                    .add(new Div().addClass("form-row")
+                            .add(
+                                    new Div().addClass("input-group")
+                                            .add(new Label().forField("fechaRegistro").text("Fecha de Registro:").addClass(labelClass))
+                                            .add(new InputDate().id("fechaRegistro").name("fechaRegistro").required(Boolean.TRUE).addClass(inputClass))
+                            )
+                            .add(
+                                    new Div().addClass("input-group")
+                                            .add(new Label().forField("nhrc").text("NHRC (Número de Historia Clínica)").addClass(labelClass))
+                                            .add(new InputText().id("nhrc").name("nhrc").required(Boolean.TRUE).addClass(inputClass))
+                            )
+                            .add(
+                                    new Div().addClass("input-group")
+                                            .add(new Label().forField("numeromuestra").text("Número de muestra:").addClass(labelClass))
+                                            .add(new InputText().id("numeromuestra").name("numeromuestra").required(Boolean.TRUE).addClass(inputClass))
+                            )
+                            .add(
+                                    new Div().addClass("input-group")
+                                            .add(new Label().forField("edad").text("Edad del Paciente:").addClass(labelClass))
+                                            .add(new InputNumber().id("edad").name("edad").required(Boolean.TRUE).addClass(inputClass).min("0").max("125"))
+                            )
+                    );
+            Div divReasonSection = new Div().id("reason-section")
+                    .add(new FieldSet().text("Motivo del estudio"))
+                    .add(
+                            new Div().addClass("radio-group-container two-columns")
+                                    .add(
+                                            new Div().addClass("radio-item")
+                                                    .add(new InputRadio().id("motivo1").name("motivo").required(Boolean.TRUE).value("Vaginitis"))
+                                                    .add(new Label().forField("motivo1").text("Vaginitis").addClass(labelClass))
+                                    )
+                                    .add(
+                                            new Div().addClass("radio-item")
+                                                    .add(new InputRadio().id("motivo2").name("motivo").required(Boolean.TRUE).value("Candidiasis previa"))
+                                                    .add(new Label().forField("motivo2").text("Candidiasis previa").addClass(labelClass))
+                                    )
+                                    .add(
+                                            new Div().addClass("radio-item")
+                                                    .add(new InputRadio().id("motivo3").name("motivo").required(Boolean.TRUE).value("Coitorragia"))
+                                                    .add(new Label().forField("motivo3").text("Coitorragia").addClass(labelClass))
+                                    )
+                                    .add(
+                                            new Div().addClass("radio-item")
+                                                    .add(new InputRadio().id("motivo4").name("motivo").required(Boolean.TRUE).value("Dispareunia"))
+                                                    .add(new Label().forField("motivo4").text("Dispareunia").addClass(labelClass))
+                                    )
+                                    .add(
+                                            new Div().addClass("radio-item")
+                                                    .add(new InputRadio().id("motivo5").name("motivo").required(Boolean.TRUE).value("Disuaria/Cistitis"))
+                                                    .add(new Label().forField("motivo5").text("Disuaria/Cistitis").addClass(labelClass))
+                                    )
+                                    .add(
+                                            new Div().addClass("radio-item")
+                                                    .add(new InputRadio().id("motivo6").name("motivo").required(Boolean.TRUE).value("Gestante"))
+                                                    .add(new Label().forField("motivo6").text("Gestante").addClass(labelClass))
+                                    )
+                    );
+
+            /**
+             *
+             */
+            Button saveButton = new Button()
+                    .hx_post("/jmoordbcoreexampleweb/api/FormularioControllers")
+                    .hx_target("#save-feedback")
+                    .hx_swap("innerHTML")
+                    .hx_include("#mainForm")
+                    .hx_indicator("#saveButton .htmx-indicator")
+                    .add(new Span().text("Guardar Expediente").addClass("button-text"))
+                    .add(new Span().addClass("htmx-indicator spinner"));
+
+            Div divSaveFeedBack = new Div();
+
+            //  <div id="save-feedback"></div>
+            mainForm.add(divPatientData);
+            mainForm.add(divReasonSection);
+            mainForm.add(saveButton);
+            mainForm.add(divSaveFeedBack);
+            mainContent = new Panel("Analisis", mainForm, request);
+        } catch (Exception e) {
+            System.out.println("\t content() " + e.getLocalizedMessage());
+        }
+        return mainContent;
+    }
+
+    @Override
+    protected String javaScriptCode() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+}
+
+
+
+
+```
+
+
+Se basa en una pagina html con el diseño siguiente
+
+```html
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Once Cargas y Formulario Completo - Elegante</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        <style>
+            /* ... (El resto de tus estilos CSS se mantiene igual) ... */
+            :root {
+                --primary-color: #007bff;
+                --primary-light: #e6f0ff;
+                --secondary-color: #6c757d;
+                --success-color: #28a745;
+                --success-light: #e2f0d9;
+                --danger-color: #dc3545;
+                --danger-light: #f8d7da;
+                --border-color: #ced4da;
+                --background-light: #f8f9fa;
+                --text-color: #343a40;
+                --white: #ffffff;
+                --shadow: rgba(0, 0, 0, 0.1);
+            }
+
+            body {
+                font-family: 'Montserrat', sans-serif;
+                margin: 0;
+                padding: 30px;
+                background-color: var(--background-light);
+                color: var(--text-color);
+                line-height: 1.6;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                min-height: 100vh;
+            }
+
+            h1, h2, h3 {
+                font-weight: 600;
+                color: var(--text-color);
+                margin-bottom: 15px;
+            }
+
+            h1 {
+                font-size: 2.5em;
+                text-align: center;
+                width: 100%;
+                margin-bottom: 40px;
+                color: var(--primary-color);
+            }
+
+            h2 {
+                font-size: 1.8em;
+                border-bottom: 2px solid var(--primary-color);
+                padding-bottom: 10px;
+                margin-bottom: 25px;
+            }
+            h3 {
+                font-size: 1.2em;
+                color: var(--secondary-color);
+                margin-bottom: 10px;
+            }
+
+            form {
+                background-color: var(--white);
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px var(--shadow);
+                max-width: 900px;
+                width: 100%;
+            }
+
+            .upload-section {
+                border: 2px dashed var(--primary-color);
+                padding: 25px;
+                margin-bottom: 35px;
+                border-radius: 8px;
+                background-color: var(--primary-light);
+            }
+
+            .image-containers {
+                display: flex;
+                gap: 25px;
+                margin-top: 25px;
+                flex-wrap: wrap;
+            }
+            .image-container-box {
+                flex: 1;
+                min-width: 280px;
+                background-color: var(--white);
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            }
+
+            .preview-box {
+                max-width: 100%;
+                height: 200px;
+                overflow: hidden;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                margin-top: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: var(--background-light);
+            }
+            .preview-box img {
+                max-width: 100%;
+                max-height: 100%;
+                height: auto;
+                width: auto;
+                display: none;
+                object-fit: contain;
+            }
+            .preview-box p {
+                color: var(--secondary-color);
+                text-align: center;
+                padding: 10px;
+                margin: 0;
+            }
+
+            input[type='file'] {
+                display: block;
+                margin-bottom: 15px;
+                padding: 10px;
+                border: 1px solid var(--border-color);
+                border-radius: 5px;
+                background-color: var(--white);
+                width: calc(100% - 22px);
+            }
+
+            button {
+                padding: 10px 20px;
+                background-color: var(--primary-color);
+                color: var(--white);
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1em;
+                font-weight: 500;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 100px;
+                margin-top: 10px;
+            }
+            button:hover:not(:disabled) {
+                background-color: #0056b3;
+                transform: translateY(-2px);
+            }
+            button:disabled {
+                background-color: #cccccc;
+                cursor: not-allowed;
+                transform: none;
+            }
+            .spinner {
+                border: 3px solid rgba(255, 255, 255, 0.3);
+                border-top-color: #fff;
+                border-radius: 50%;
+                width: 1.2em;
+                height: 1.2em;
+                animation: spin 0.8s linear infinite;
+                display: inline-block;
+                vertical-align: middle;
+                margin-left: 8px;
+            }
+            button .htmx-indicator {
+                display: none;
+            }
+            .htmx-request .button-text {
+                display: none;
+            }
+            .htmx-request .htmx-indicator {
+                display: inline-block;
+            }
+
+            /* --- ESTILOS DE FORMULARIO PRINCIPAL Y RESULTADOS --- */
+            .result-fields-container {
+                margin-top: 25px;
+                padding: 20px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background-color: var(--background-light);
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+            .result-fields-container p {
+                font-weight: 500;
+                color: var(--primary-color);
+                margin-bottom: 15px;
+            }
+            .input-group {
+                margin-bottom: 15px;
+                display: flex;
+                flex-direction: column;
+            }
+            .input-group label {
+                font-weight: 500;
+                margin-bottom: 8px;
+                color: var(--text-color);
+                font-size: 0.95em;
+            }
+            .input-group input, .input-group select {
+                padding: 10px 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                background-color: var(--white);
+                font-size: 1em;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            }
+            .input-group input:focus, .input-group select:focus {
+                border-color: var(--primary-color);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            }
+            .input-group input[readonly] {
+                background-color: #e9ecef;
+                cursor: default;
+            }
+
+            #patient-data {
+                border: 2px solid var(--primary-color);
+                padding: 30px;
+                margin-bottom: 40px;
+                border-radius: 10px;
+                background-color: var(--primary-light);
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            }
+            .form-row {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 15px;
+                flex-wrap: wrap;
+            }
+            .form-row .input-group {
+                flex: 1;
+                min-width: 200px;
+            }
+
+            #saveButton {
+                padding: 15px 30px;
+                background-color: var(--success-color);
+                color: var(--white);
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.2em;
+                font-weight: 600;
+                margin-top: 30px;
+                width: auto;
+                min-width: 150px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #saveButton:hover:not(:disabled) {
+                background-color: #1e7e34;
+            }
+            #saveButton:disabled {
+                background-color: #90ee90;
+                cursor: not-allowed;
+            }
+            #save-feedback {
+                margin-top: 25px;
+                padding: 15px;
+                border-radius: 8px;
+                min-height: 20px;
+                border: 1px solid transparent;
+                text-align: center;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+            #save-feedback.success {
+                border-color: var(--success-color);
+                background-color: var(--success-light);
+                color: var(--success-color);
+            }
+            #save-feedback.error {
+                border-color: var(--danger-color);
+                background-color: var(--danger-light);
+                color: var(--danger-color);
+            }
+            #save-feedback.pending {
+                border-color: var(--primary-color);
+                background-color: var(--primary-light);
+                color: var(--primary-color);
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid var(--border-color);
+                margin: 40px 0;
+            }
+
+            /* Media Queries para responsividad */
+            @media (max-width: 768px) {
+                body {
+                    padding: 20px 15px;
+                }
+                /* ... otros estilos responsivos ... */
+            }
+
+            /* Para radio buttons */
+
+            /* Añadir esta clase a la sección de estilos CSS */
+            .radio-group-container.two-columns {
+                /* Usar Flexbox para el contenedor principal */
+                display: flex;
+                flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea */
+                column-count: 2; /* Intentar dividir en 2 columnas (funciona bien en navegadores modernos) */
+                gap: 15px 30px; /* Separación vertical y horizontal */
+            }
+
+            /* Modificar el estilo del ítem de radio para que ocupe el ancho adecuado */
+            .radio-group-container.two-columns .radio-item {
+                /* Cada ítem ocupará la mitad del ancho del contenedor, menos el espacio del gap */
+                flex: 1 1 calc(50% - 30px);
+                min-width: 250px; /* Asegura que no se aprieten demasiado */
+            }
+
+            /* Media Query para volver a una sola columna en pantallas pequeñas (móviles) */
+            @media (max-width: 768px) {
+                .radio-group-container.two-columns {
+                    display: block; /* Desactiva las columnas en móvil */
+                    column-count: 1;
+                }
+                .radio-group-container.two-columns .radio-item {
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+            }
+
+            /* Mantener/Añadir estos estilos para la visibilidad del input 'Otro' */
+            #other-reason-input-group {
+                margin-top: 15px;
+                transition: opacity 0.3s ease, max-height 0.3s ease;
+                overflow: hidden;
+                opacity: 0;
+                max-height: 0;
+            }
+            #other-reason-input-group.visible {
+                opacity: 1;
+                max-height: 100px; /* Muestra el input */
+            }
+
+
+
+            * --- ESTILOS PARA LA NUEVA SECCIÓN PCRits (Similar a Motivo/Diagnóstico) --- */
+            .pcrits-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .pcrits-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+
+            .checkbox-group-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-top: 15px;
+            }
+
+            .checkbox-group-container.two-columns {
+                column-count: 2;
+                gap: 15px 30px;
+            }
+
+            .checkbox-group {
+                flex: 1 1 calc(50% - 15px); /* Cada grupo ocupa una columna */
+                min-width: 250px;
+            }
+
+            .checkbox-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+
+            .checkbox-item input[type="checkbox"] {
+                margin-right: 10px;
+                appearance: none;
+                width: 18px;
+                height: 18px;
+                border: 2px solid var(--primary-color);
+                border-radius: 4px; /* Cuadrado para checkbox */
+                transition: background-color 0.2s;
+                cursor: pointer;
+            }
+
+            .checkbox-item input[type="checkbox"]:checked {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+                /* Puedes añadir un checkmark con pseudo-elementos si lo deseas */
+            }
+
+            .checkbox-item label {
+                font-weight: 400;
+                font-size: 1em;
+                cursor: pointer;
+            }
+
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN LEUCOCITOS --- */
+            .leucocitos-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .leucocitos-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+            /* Reutiliza los estilos genéricos de .checkbox-item y .input-group */
+
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN LEVADURAS --- */
+            .levaduras-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .levaduras-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+
+            /* Nota: Asegúrate de que los estilos para input[type="radio"] estén definidos */
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN EPITELIALES --- */
+            .epiteliales-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .epiteliales-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+            /* Reutiliza los estilos genéricos de .radio-item y .input-group */
+
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN ESCALA NUGENT --- */
+            .nugent-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .nugent-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+            /* Reutiliza los estilos genéricos de .input-group */
+
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN CULTIVO --- */
+            .cultivo-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .cultivo-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+            /* Reutiliza los estilos para .checkbox-group-container.two-columns para la distribución 5x4 */
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN SWITCH --- */
+            .cultivo-switch-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .cultivo-switch-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+
+            .switch-container {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                margin-top: 15px;
+            }
+
+            .switch-label {
+                font-weight: 500;
+                font-size: 1em;
+            }
+
+            /* Estilos para el Toggle Switch (Interruptor) */
+            .toggle-switch {
+                position: relative;
+                display: inline-block;
+                width: 60px;
+                height: 34px;
+            }
+
+            .toggle-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+            }
+
+            input:checked + .slider {
+                background-color: var(--primary-color);
+            }
+
+            input:focus + .slider {
+                box-shadow: 0 0 1px var(--primary-color);
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(26px);
+            }
+
+            /* Bordes redondeados */
+            .slider.round {
+                border-radius: 34px;
+            }
+
+            .slider.round:before {
+                border-radius: 50%;
+            }
+
+
+            /* --- ESTILOS PARA LA NUEVA SECCIÓN HONGOS --- */
+            .recuento-hongos-section {
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                margin-bottom: 40px;
+                border-radius: 8px;
+                background-color: var(--white);
+            }
+
+            .recuento-hongos-section legend {
+                font-size: 1.4em;
+                font-weight: 600;
+                color: var(--primary-color);
+                padding: 0 10px;
+                margin-left: -10px;
+            }
+/* --- ESTILOS PARA LA NUEVA SECCIÓN CALIDAD DE TINCIÓN --- */
+.calidad-tincion-section {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    background-color: var(--white);
+}
+
+.calidad-tincion-section legend {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 0 10px;
+    margin-left: -10px;
+}
+            
+
+/* --- ESTILOS PARA LA NUEVA SECCIÓN CULTIVO U ORINA --- */
+.cultivo-orina-section {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    background-color: var(--white);
+}
+
+.cultivo-orina-section legend {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 0 10px;
+    margin-left: -10px;
+}
+
+/* Reutiliza los estilos genéricos de .radio-item y .radio-group-container */
+
+/* --- ESTILOS PARA LA NUEVA SECCIÓN DISCREPANCIA --- */
+.discrepancia-section {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    background-color: var(--white);
+}
+
+.discrepancia-section legend {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 0 10px;
+    margin-left: -10px;
+}
+/* Reutilizar los estilos .switch-container, .toggle-switch, .slider, etc. de la sección de Imagen 11 */
+
+        </style>
+    </head>
+    <body>
+        <h1>Registro de Datos para analisis</h1>
+<form class="max-w-sm mx-auto">
+  <div class="mb-5">
+    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+    <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" required />
+  </div>
+  <div class="mb-5">
+    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
+    <input type="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+  </div>
+  <div class="flex items-start mb-5">
+    <div class="flex items-center h-5">
+      <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
+    </div>
+    <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+  </div>
+  <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+</form>
+        <form id='mainForm'>
+
+            <div id="patient-data">
+                <h2>Datos del Paciente</h2>
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="fechaRegistro">Fecha de Registro:</label>
+                        <input type="date" id="fechaRegistro" name="fechaRegistro" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="nhrc">NHRC (Número de Historia Clínica):</label>
+                        <input type="text" id="nhrc" name="nhrc" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="nhrc">Número de muestra</label>
+                        <input type="text" id="numeromuestra" name="numeromuestra" required>
+                    </div>
+
+
+                    <div class="input-group">
+                        <label for="edad">Edad del Paciente:</label>
+                        <input type="number" id="edad" name="edad" required min="0" max="125" oninput="validateAge(this)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="reason-section">
+                <fieldset>
+                    <legend>Motivo del Estudio</legend>
+                    <div class="radio-group-container two-columns">
+                        <div class="radio-item">
+                            <input type="radio" id="motivo1" name="motivo" value="Vaginitis" required>
+                            <label for="motivo1">Vaginitis</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo2" name="motivo" value="Candidiasis previa">
+                            <label for="motivo2">Candidiasis previa</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo3" name="motivo" value="Coitorragia">
+                            <label for="motivo3">Coitorragia</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo4" name="motivo" value="Dispareunia">
+                            <label for="motivo4">Dispareunia</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo5" name="motivo" value="Disuaria/Cistitis">
+                            <label for="motivo5">Disuaria/Cistitis</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo6" name="motivo" value="Gestante">
+                            <label for="motivo6">Gestant</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo7" name="motivo" value="TS previa">
+                            <label for="motivo7">TS previa</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo8" name="motivo" value="Leucorrea">
+                            <label for="motivo8">Leucorrea</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo9" name="motivo" value="Prurito">
+                            <label for="motivo9">Prurito</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo10" name="motivo" value="Sospecha cadidiasis">
+                            <label for="motivo10">Sospecha cadidiasis</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo11" name="motivo" value="Sospecha ITS">
+                            <label for="motivo11">Sospecha ITS</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo12" name="motivo" value="Contracepción">
+                            <label for="motivo12">Contracepción</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo13" name="motivo" value="Sin datos/Actividades">
+                            <label for="motivo13">Sin datos/Actividades</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="motivo14" name="motivo" value="Preventivas">
+                            <label for="motivo14">Preventivas</label>
+                        </div>
+
+                        <div class="radio-item">
+                            <input type="radio" id="motivo23" name="motivo" value="Otro">
+                            <label for="motivo23">Otro</label>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="input-group" id="other-reason-input-group">
+                    <label for="otroMotivoInput">**Otro Motivo Específico:**</label>
+                    <input type="text" id="otroMotivoInput" name="otroMotivo" placeholder="Especifique el motivo aquí" disabled>
+                </div>
+            </div>
+
+
+            <hr> 
+            <div class="diagnosis-section">
+                <fieldset>
+                    <legend>Diagnóstico del Estudio</legend>
+                    <div class="radio-group-container two-columns">
+                        <div class="radio-item">
+                            <input type="radio" id="diag1" name="diagnostico" value="Normal" required>
+                            <label for="diag1">Normal</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="diag2" name="diagnostico" value="Vaginosis">
+                            <label for="diag2">Vaginosis</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="diag3" name="diagnostico" value="Levaduras">
+                            <label for="diag3">Levaduras</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="diag4" name="diagnostico" value="Escasa flora">
+                            <label for="diag4">Escasa flora</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="diag5" name="diagnostico" value="Leucocitos">
+                            <label for="diag5">Leucocitos</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>        
+
+            <hr> 
+            <div class="pcrits-section">
+                <fieldset>
+                    <legend>PCRits</legend>
+                    <div class="checkbox-group-container four-by-four"> 
+
+
+
+                        <div class="checkbox-group positive-results-group column-one">
+                            <!--<h3>Resultados (Col. 1)</h3>-->
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrNoRealizada" name="pcritsStatus" value="No Realizada" class="pcrits-status-control">
+                                <label for="pcrNoRealizada">No Realizada</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrNegativa" name="pcritsStatus" value="Negativa" class="pcrits-status-control">
+                                <label for="pcrNegativa">Negativa</label>
+                            </div>
+
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrGono" name="pcritsResultados" value="+ Gonococo" class="pcrits-result">
+                                <label for="pcrGono">+ Gonococo</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrClamidia" name="pcritsResultados" value="+ Clamidia" class="pcrits-result">
+                                <label for="pcrClamidia">+ Clamidia</label>
+                            </div>
+
+                        </div>
+
+                        <div class="checkbox-group positive-results-group column-two">
+                            <!--<h3>Resultados (Col. 2)</h3>-->
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrHerpes" name="pcritsStatus" value="+ Herpes (1 o 2)" class="pcrits-result">
+                                <label for="pcrHerpes">+ Herpes (1 o 2)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrVPH" name="pcritsStatus" value="+ VPH" class="pcrits-result">
+                                <label for="pcrVPH">+ VPH</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrMico" name="pcritsStatus" value="+ Micoplasma" class="pcrits-result">
+                                <label for="pcrMico">+ Micoplasma</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pcrTricho" name="pcritsStatus" value="+ Trichomonas" class="pcrits-result">
+                                <label for="pcrTricho">+ Trichomonas</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+
+            <hr> 
+
+            <div class="ct-section-standalone" style="padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 40px; background-color: var(--background-light);">
+                <h2 style="font-size: 1.4em; color: var(--text-color); margin-bottom: 15px;">Registro de Valores CT</h2>
+
+                <div class="input-group ct-value-input">
+                    <label for="ctPcrPositiva">**CT PCR Positiva (Valores Negativos):**</label>
+                    <input type="text" id="ctPcrPositiva" name="ctPcrPositiva" 
+                           placeholder="CT PCR Positiva">
+                </div>
+            </div>
+            <hr>
+
+            <hr> 
+            <div class="etiquetado-gram-section">
+                <fieldset>
+                    <legend>Etiquetado imagen GRAM</legend>
+                    <h3 style="margin-top: 5px; color: var(--secondary-color); font-size: 1em;">Datos referidos a IMG 1</h3>
+
+                    <div class="checkbox-group-container two-columns">
+
+                        <div class="checkbox-group column-one">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram1" name="gramEtiquetado" value="Artefacto">
+                                <label for="gram1">Artefacto</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram2" name="gramEtiquetado" value="Bacilos Gram positivos (lactobacillus)">
+                                <label for="gram2">Bacilos Gram positivos (lactobacillus)</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram3" name="gramEtiquetado" value="Bacilos Gram negativos">
+                                <label for="gram3">Bacilos Gram negativos</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram4" name="gramEtiquetado" value="Células 'atípicas'">
+                                <label for="gram4">Células 'atípicas'</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram5" name="gramEtiquetado" value="Células clave">
+                                <label for="gram5">Células clave</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram6" name="gramEtiquetado" value="Cocos positivos en cadena">
+                                <label for="gram6">Cocos positivos en cadena</label>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group column-two">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram7" name="gramEtiquetado" value="Diplococos gran negativos">
+                                <label for="gram7">Diplococos gran negativos</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram8" name="gramEtiquetado" value="Hematíes">
+                                <label for="gram8">Hematíes</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram9" name="gramEtiquetado" value="Hifas">
+                                <label for="gram9">Hifas</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram10" name="gramEtiquetado" value="Leucocitos">
+                                <label for="gram10">Leucocitos</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram11" name="gramEtiquetado" value="Levaduras">
+                                <label for="gram11">Levaduras</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram12" name="gramEtiquetado" value="Acúmulos/agregados de bacterias">
+                                <label for="gram12">Acúmulos/agregados de bacterias</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="gram13" name="gramEtiquetado" value="Mobiluncus (Morfología compatible)">
+                                <label for="gram13">Mobiluncus (Morfología compatible)</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+
+
+            <hr> 
+            <div class="leucocitos-section">
+                <fieldset>
+                    <legend>Presencia leucocitos (Imagen 1)</legend>
+
+                    <div class="checkbox-group-container single-column-leuco" style="display: flex; gap: 20px;">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="leuco0" name="leucocitosPresencia" value="0" class="leuco-option">
+                            <label for="leuco0">0</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="leuco1" name="leucocitosPresencia" value="1" class="leuco-option">
+                            <label for="leuco1">1</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="leuco5_29" name="leucocitosPresencia" value="5-29" class="leuco-option">
+                            <label for="leuco5_29">5-29</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="leuco30" name="leucocitosPresencia" value=">30" class="leuco-option">
+                            <label for="leuco30">>30</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="input-group" style="margin-top: 25px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                    <label for="otroLeucocitoValor">**Ingresar un valor no listado (o valor exacto):**</label>
+                    <input type="text" id="otroLeucocitoValor" name="otroLeucocitoValor" 
+                           placeholder="Ej: 3, 4, 40, o algún valor específico">
+                </div>
+            </div>
+
+
+
+
+
+
+            <hr> 
+            <div class="levaduras-section">
+                <fieldset>
+                    <legend>Presencia levaduras (Imagen 1)</legend>
+
+                    <div class="radio-group-container single-column-lev" style="display: flex; gap: 20px;">
+                        <div class="radio-item">
+                            <input type="radio" id="levadura0" name="levadurasPresencia" value="0" class="levadura-option">
+                            <label for="levadura0">0</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="levadura1" name="levadurasPresencia" value="1" class="levadura-option">
+                            <label for="levadura1">1</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="levadura5_29" name="levadurasPresencia" value="5-29" class="levadura-option">
+                            <label for="levadura5_29">5-29</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="levadura30" name="levadurasPresencia" value=">30" class="levadura-option">
+                            <label for="levadura30">>30</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="input-group" style="margin-top: 25px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                    <label for="otroLevaduraValor">**Ingresar un valor no listado (o valor exacto):**</label>
+                    <input type="text" id="otroLevaduraValor" name="otroLevaduraValor" 
+                           placeholder="Ej: 3, 4, 40, o algún valor específico">
+                </div>
+            </div>
+
+
+
+            <hr> 
+            <div class="epiteliales-section">
+                <fieldset>
+                    <legend>Presencia epiteliales (Imagen 1)</legend>
+
+                    <div class="radio-group-container single-column-epitelial" style="display: flex; gap: 20px;">
+                        <div class="radio-item">
+                            <input type="radio" id="epitelial0" name="epitelialesPresencia" value="0" class="epitelial-option">
+                            <label for="epitelial0">0</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="epitelial1" name="epitelialesPresencia" value="1" class="epitelial-option">
+                            <label for="epitelial1">1</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="epitelial5_29" name="epitelialesPresencia" value="5-29" class="epitelial-option">
+                            <label for="epitelial5_29">5-29</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="epitelial30" name="epitelialesPresencia" value=">30" class="epitelial-option">
+                            <label for="epitelial30">>30</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="input-group" style="margin-top: 25px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                    <label for="otroEpitelialValor">**Ingresar un valor no listado (o valor exacto):**</label>
+                    <input type="text" id="otroEpitelialValor" name="otroEpitelialValor" 
+                           placeholder="Ej: 3, 4, 40, o algún valor específico">
+                </div>
+            </div>
+
+
+
+            <hr> 
+            <div class="nugent-section">
+                <fieldset>
+                    <legend>Escala Nugent observador</legend>
+
+                    <div class="input-group nugent-input-group" style="display: flex; align-items: center; gap: 20px;">
+                        <label for="nugentScore" style="font-weight: 500; min-width: 120px;">Puntuación (0-10):</label>
+
+                        <input type="number" 
+                               id="nugentScore" 
+                               name="nugentScore" 
+                               min="0" 
+                               max="10" 
+                               value=""
+                               placeholder="0 a 10" 
+                               style="width: 100px; text-align: center; font-size: 1.2em; font-weight: 600;">
+                    </div>
+
+                    <div class="nugent-description" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                        <p style="font-size: 0.95em; color: var(--secondary-color); margin: 0;">
+                            **Criterios de Interpretación:**
+                        <ul style="margin: 5px 0 0 20px; padding: 0;">
+                            <li>**0-3:** Normal</li>
+                            <li>**4-6:** Intermedio (Mixto)</li>
+                            <li>**>7:** Vaginosis bacteriana</li>
+                        </ul>
+                        </p>
+                    </div>
+                </fieldset>
+            </div>
+
+
+            <hr> 
+            <div class="cultivo-section">
+                <fieldset>
+                    <legend>Resultado cultivo</legend>
+
+                    <div class="checkbox-group-container two-columns">
+
+                        <div class="checkbox-group column-one">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo1" name="resultadoCultivo" value="Flora habitual" class="cultivo-result">
+                                <label for="cultivo1">Flora habitual</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo2" name="resultadoCultivo" value="Candida albicans" class="cultivo-result">
+                                <label for="cultivo2">Candida albicans</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo3" name="resultadoCultivo" value="Candida glabrata" class="cultivo-result">
+                                <label for="cultivo3">Candida glabrata</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo4" name="resultadoCultivo" value="Candida parapsilosis" class="cultivo-result">
+                                <label for="cultivo4">Candida parapsilosis</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo5" name="resultadoCultivo" value="Gardnerella" class="cultivo-result">
+                                <label for="cultivo5">Gardnerella</label>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group column-two">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo6" name="resultadoCultivo" value="Streptococcus pyogenes" class="cultivo-result">
+                                <label for="cultivo6">Streptococcus pyogenes</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo7" name="resultadoCultivo" value="Haemophillus sp." class="cultivo-result">
+                                <label for="cultivo7">Haemophillus sp.</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo8" name="resultadoCultivo" value="Gonococo" class="cultivo-result">
+                                <label for="cultivo8">Gonococo</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cultivo9" name="resultadoCultivo" value="No procede/ No se aísla candida" class="cultivo-result">
+                                <label for="cultivo9">No procede/ No se aísla candida</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+
+
+                      <div class="upload-section">
+                <h2>Carga 1: Radiografía Frontal</h2>
+                <input type='file' name='fileUpload1' onchange="previewImage(event, 'image-preview1', 'placeholder-text1')">
+                <button id="uploadButton1" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload1' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload1']" hx-indicator="#uploadButton1 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 1</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview1" alt="Vista previa de la imagen 1"><p id="placeholder-text1">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields1" class="result-fields-container">
+                    <p id="feedback-message1">Resultados de Carga 1:</p>
+                    <div class="input-group"><label for="fileIdInput1">ID de Archivo:</label><input type="text" id="fileIdInput1" name="fileId1" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput1">Nombre Original:</label><input type="text" id="originalFileNameInput1" name="originalFileName1" value="" readonly></div>
+                </div>
+            </div>
+            
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 2: Radiografía Lateral</h2>
+                <input type='file' name='fileUpload2' onchange="previewImage(event, 'image-preview2', 'placeholder-text2')">
+                <button id="uploadButton2" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload2' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload2']" hx-indicator="#uploadButton2 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 2</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview2" alt="Vista previa de la imagen 2"><p id="placeholder-text2">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields2" class="result-fields-container">
+                    <p id="feedback-message2">Resultados de Carga 2:</p>
+                    <div class="input-group"><label for="fileIdInput2">ID de Archivo:</label><input type="text" id="fileIdInput2" name="fileId2" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput2">Nombre Original:</label><input type="text" id="originalFileNameInput2" name="originalFileName2" value="" readonly></div>
+                </div>
+            </div>
+            
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 3: Ecografía</h2>
+                <input type='file' name='fileUpload3' onchange="previewImage(event, 'image-preview3', 'placeholder-text3')">
+                <button id="uploadButton3" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload3' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload3']" hx-indicator="#uploadButton3 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 3</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview3" alt="Vista previa de la imagen 3"><p id="placeholder-text3">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields3" class="result-fields-container">
+                    <p id="feedback-message3">Resultados de Carga 3:</p>
+                    <div class="input-group"><label for="fileIdInput3">ID de Archivo:</label><input type="text" id="fileIdInput3" name="fileId3" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput3">Nombre Original:</label><input type="text" id="originalFileNameInput3" name="originalFileName3" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+            
+            <div class="upload-section">
+                <h2>Carga 4: Tomografía Computarizada</h2>
+                <input type='file' name='fileUpload4' onchange="previewImage(event, 'image-preview4', 'placeholder-text4')">
+                <button id="uploadButton4" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload4' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload4']" hx-indicator="#uploadButton4 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 4</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview4" alt="Vista previa de la imagen 4"><p id="placeholder-text4">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields4" class="result-fields-container">
+                    <p id="feedback-message4">Resultados de Carga 4:</p>
+                    <div class="input-group"><label for="fileIdInput4">ID de Archivo:</label><input type="text" id="fileIdInput4" name="fileId4" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput4">Nombre Original:</label><input type="text" id="originalFileNameInput4" name="originalFileName4" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+            
+            <div class="upload-section">
+                <h2>Carga 5: Resonancia Magnética</h2>
+                <input type='file' name='fileUpload5' onchange="previewImage(event, 'image-preview5', 'placeholder-text5')">
+                <button id="uploadButton5" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload5' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload5']" hx-indicator="#uploadButton5 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 5</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview5" alt="Vista previa de la imagen 5"><p id="placeholder-text5">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields5" class="result-fields-container">
+                    <p id="feedback-message5">Resultados de Carga 5:</p>
+                    <div class="input-group"><label for="fileIdInput5">ID de Archivo:</label><input type="text" id="fileIdInput5" name="fileId5" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput5">Nombre Original:</label><input type="text" id="originalFileNameInput5" name="originalFileName5" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 6: Biopsia/Anatomía Patológica</h2>
+                <input type='file' name='fileUpload6' onchange="previewImage(event, 'image-preview6', 'placeholder-text6')">
+                <button id="uploadButton6" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload6' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload6']" hx-indicator="#uploadButton6 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 6</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview6" alt="Vista previa de la imagen 6"><p id="placeholder-text6">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields6" class="result-fields-container">
+                    <p id="feedback-message6">Resultados de Carga 6:</p>
+                    <div class="input-group"><label for="fileIdInput6">ID de Archivo:</label><input type="text" id="fileIdInput6" name="fileId6" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput6">Nombre Original:</label><input type="text" id="originalFileNameInput6" name="originalFileName6" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 7: Historial de Consentimiento</h2>
+                <input type='file' name='fileUpload7' onchange="previewImage(event, 'image-preview7', 'placeholder-text7')">
+                <button id="uploadButton7" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload7' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload7']" hx-indicator="#uploadButton7 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 7</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview7" alt="Vista previa de la imagen 7"><p id="placeholder-text7">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields7" class="result-fields-container">
+                    <p id="feedback-message7">Resultados de Carga 7:</p>
+                    <div class="input-group"><label for="fileIdInput7">ID de Archivo:</label><input type="text" id="fileIdInput7" name="fileId7" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput7">Nombre Original:</label><input type="text" id="originalFileNameInput7" name="originalFileName7" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+            
+            <div class="upload-section">
+                <h2>Carga 8: Reporte de Laboratorio</h2>
+                <input type='file' name='fileUpload8' onchange="previewImage(event, 'image-preview8', 'placeholder-text8')">
+                <button id="uploadButton8" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload8' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload8']" hx-indicator="#uploadButton8 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 8</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview8" alt="Vista previa de la imagen 8"><p id="placeholder-text8">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields8" class="result-fields-container">
+                    <p id="feedback-message8">Resultados de Carga 8:</p>
+                    <div class="input-group"><label for="fileIdInput8">ID de Archivo:</label><input type="text" id="fileIdInput8" name="fileId8" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput8">Nombre Original:</label><input type="text" id="originalFileNameInput8" name="originalFileName8" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 9: EKG/Electrocardiograma</h2>
+                <input type='file' name='fileUpload9' onchange="previewImage(event, 'image-preview9', 'placeholder-text9')">
+                <button id="uploadButton9" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload9' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload9']" hx-indicator="#uploadButton9 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 9</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview9" alt="Vista previa de la imagen 9"><p id="placeholder-text9">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields9" class="result-fields-container">
+                    <p id="feedback-message9">Resultados de Carga 9:</p>
+                    <div class="input-group"><label for="fileIdInput9">ID de Archivo:</label><input type="text" id="fileIdInput9" name="fileId9" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput9">Nombre Original:</label><input type="text" id="originalFileNameInput9" name="originalFileName9" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 10: Foto Clínica 1</h2>
+                <input type='file' name='fileUpload10' onchange="previewImage(event, 'image-preview10', 'placeholder-text10')">
+                <button id="uploadButton10" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload10' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload10']" hx-indicator="#uploadButton10 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 10</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview10" alt="Vista previa de la imagen 10"><p id="placeholder-text10">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields10" class="result-fields-container">
+                    <p id="feedback-message10">Resultados de Carga 10:</p>
+                    <div class="input-group"><label for="fileIdInput10">ID de Archivo:</label><input type="text" id="fileIdInput10" name="fileId10" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput10">Nombre Original:</label><input type="text" id="originalFileNameInput10" name="originalFileName10" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="upload-section">
+                <h2>Carga 11: Foto Clínica 2</h2>
+                <input type='file' name='fileUpload11' onchange="previewImage(event, 'image-preview11', 'placeholder-text11')">
+                <button id="uploadButton11" hx-post='/jmoordbcoreexampleweb/api/filesuploadsimple/upload11' hx-encoding='multipart/form-data' hx-swap="none" hx-include="[name='fileUpload11']" hx-indicator="#uploadButton11 .htmx-indicator">
+                    <span class="button-text">Subir Imagen 11</span>
+                    <span class="htmx-indicator spinner"></span>
+                </button>
+                <div class="image-containers">
+                    <div class="image-container-box">
+                        <h3>Vista Previa Local</h3>
+                        <div class="preview-box"><img id="image-preview11" alt="Vista previa de la imagen 11"><p id="placeholder-text11">Selecciona una imagen para previsualizar.</p></div>
+                    </div>
+                </div>
+                <div id="result-fields11" class="result-fields-container">
+                    <p id="feedback-message11">Resultados de Carga 11:</p>
+                    <div class="input-group"><label for="fileIdInput11">ID de Archivo:</label><input type="text" id="fileIdInput11" name="fileId11" value="" readonly></div>
+                    <div class="input-group"><label for="originalFileNameInput11">Nombre Original:</label><input type="text" id="originalFileNameInput11" name="originalFileName11" value="" readonly></div>
+                </div>
+            </div>
+
+            <hr>
+    
+            <div class="cultivo-switch-section">
+                <fieldset>
+                    <legend>Asociación de Imagen</legend>
+
+                    <div class="switch-container">
+                        <label class="switch-label">¿Imagen 11 es Cultivo?</label>
+
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="imagen11Cultivo" name="imagen11Cultivo" value="si" >
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <p style="font-size: 0.85em; color: var(--secondary-color); margin-top: 10px;">
+                        <span id="switchStatus">Estado: **NO**</span> (Marque si la Imagen 11 corresponde al cultivo.)
+                    </p>
+                </fieldset>
+            </div>
+
+            <hr> 
+            <div class="recuento-hongos-section">
+                <fieldset>
+                    <legend>Recuento crecimiento de la placa de hongos</legend>
+                    <h3 style="margin-top: 5px; color: var(--secondary-color); font-size: 1em;">Información proporcionada por el observador</h3>
+                    <div class="options-container" style="display: flex; flex-direction: column; gap: 15px;">
+
+
+
+
+                        <div class="radio-group-container growth-options" style="display: flex; gap: 30px;">
+                            <div class="radio-item">
+                                <input type="radio" id="hongo1" name="recuentoHongos" value="No crecimiento" class="hongo-cuantificacion" >
+                                <label for="hongo1">No crecimiento</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="hongo1" name="recuentoHongos" value="10^1" class="hongo-cuantificacion" >
+                                <label for="hongo1">10¹</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="hongo2" name="recuentoHongos" value="10^2" class="hongo-cuantificacion" >
+                                <label for="hongo2">10²</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="hongo3" name="recuentoHongos" value="10^3" class="hongo-cuantificacion" >
+                                <label for="hongo3">10³</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="hongo4" name="recuentoHongos" value="10^4" class="hongo-cuantificacion" >
+                                <label for="hongo4">10⁴</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="hongo5" name="recuentoHongos" value="10^5" class="hongo-cuantificacion" >
+                                <label for="hongo5">10⁵</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            </div>
+            
+            <hr> 
+<div class="calidad-tincion-section">
+    <fieldset>
+        <legend>Calidad de Tinción</legend>
+        
+        <div class="input-group">
+            <label for="calidadTincionSelect">**Seleccione la calidad de la muestra:**</label>
+            
+            <select id="calidadTincionSelect" name="calidadTincion" required 
+                    style="width: 100%; padding: 10px; font-size: 1em;">
+                
+                <option value="" disabled selected>--- Elegir Calidad ---</option>
+                <option value="Buena">Buena</option>
+                <option value="Regular">Regular</option>
+                <option value="Mala">Mala</option>
+                
+            </select>
+        </div>
+        
+    </fieldset>
+</div>
+            
+            <hr> 
+<div class="cultivo-orina-section">
+    <fieldset>
+        <legend>Cultivo u Orina</legend>
+        
+        <div class="radio-group-container single-column-orina" style="display: flex; gap: 30px;">
+            <div class="radio-item">
+                <input type="radio" id="orinaNoPedido" name="cultivoOrinaResultado" value="No pedido" required>
+                <label for="orinaNoPedido">No pedido</label>
+            </div>
+            <div class="radio-item">
+                <input type="radio" id="orinaNegativo" name="cultivoOrinaResultado" value="Negativo">
+                <label for="orinaNegativo">Negativo</label>
+            </div>
+            <div class="radio-item">
+                <input type="radio" id="orinaContaminada" name="cultivoOrinaResultado" value="Contaminada">
+                <label for="orinaContaminada">Contaminada</label>
+            </div>
+            <div class="radio-item">
+                <input type="radio" id="orinaPositivo" name="cultivoOrinaResultado" value="Positivo">
+                <label for="orinaPositivo">Positivo</label>
+            </div>
+        </div>
+        
+    </fieldset>
+</div>
+            
+            <hr> 
+<div class="discrepancia-section">
+    <fieldset>
+        <legend>Imagen con potencial discrepancia</legend>
+        
+        <p style="font-size: 0.95em; color: var(--secondary-color); margin-bottom: 15px;">
+            Indicar si existe discrepancia con el informe realizado por los técnicos en SERVOLAB:
+        </p>
+        
+        <div class="switch-container">
+            <label class="switch-label">¿Hay Discrepancia?</label>
+            
+            <label class="toggle-switch">
+                <input type="checkbox" id="discrepancia" name="discrepancia"  value="si" >
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <p style="font-size: 0.85em; color: var(--secondary-color); margin-top: 10px;">
+            <span id="discrepanciaStatus">Estado: **NO**</span> (Mueva el switch a SÍ si detecta discrepancia.)
+        </p>
+    </fieldset>
+</div>
+            
+            <hr>
+
+           <button id="saveButton"
+                    hx-post='/jmoordbcoreexampleweb/api/FormularioController'
+                    hx-target="#save-feedback"
+                    hx-swap="innerHTML"
+                    hx-include="#mainForm"  hx-indicator="#saveButton .htmx-indicator">
+                <span class="button-text">Guardar Expediente</span>
+                <span class="htmx-indicator spinner"></span>
+            </button>
+            <div id="save-feedback"></div>
+
+        </form>
+    </body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            setTodayDate();
+            // ... (El resto de tu lógica JS como previewImage, etc. debería estar aquí) ...
+        });
+
+        function setTodayDate() {
+            const dateInput = document.getElementById('fechaRegistro');
+            if (dateInput) {
+                const today = new Date();
+                const year = today.getFullYear();
+                // El mes se obtiene con getMonth() que es base 0, por eso se suma 1.
+                // Se usa padStart(2, '0') para asegurar dos dígitos (ej: 01, 12).
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+
+                // Formato ISO 8601 (YYYY-MM-DD) requerido por input type="date"
+                const todayDate = `${year}-${month}-${day}`;
+                dateInput.value = todayDate;
+            }
+        }
+
+        function previewImage(event, imgId, textId) {
+            const reader = new FileReader();
+            const imagePreview = document.getElementById(imgId);
+            const placeholderText = document.getElementById(textId);
+
+            reader.onload = function () {
+                if (reader.readyState == 2) {
+                    imagePreview.src = reader.result;
+                    imagePreview.style.display = 'block';
+                    if (placeholderText)
+                        placeholderText.style.display = 'none';
+                }
+            }
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
+                if (placeholderText)
+                    placeholderText.style.display = 'block';
+            }
+        }
+
+
+        function validateAge(inputElement) {
+            // Obtenemos el valor actual del campo, convertido a un número
+            let value = parseInt(inputElement.value);
+
+            // Si el valor es menor que 0 (negativo), lo forzamos a ser 0
+            if (value < 0) {
+                inputElement.value = 0;
+            }
+
+            // Opcional: También puedes truncar los valores demasiado altos aquí
+            // let max = parseInt(inputElement.getAttribute('max'));
+            // if (value > max) {
+            //     inputElement.value = max;
+            // }
+        }
+
+        // Si tienes más funciones o listeners htmx, colócalos aquí.
+
+        // FUNCIÓN PARA GESTIONAR EL CAMPO 'OTRO MOTIVO'
+        function handleMotivoChange(event) {
+            const otherMotivoInputGroup = document.getElementById('other-reason-input-group');
+            const otherMotivoInput = document.getElementById('otroMotivoInput');
+
+            // Si el valor seleccionado es 'Otro'
+            if (event.target.value === 'Otro') {
+                // Mostrar y hacer requerido el campo 'Otro Motivo'
+                otherMotivoInputGroup.classList.add('visible');
+                otherMotivoInput.required = true;
+                otherMotivoInput.removeAttribute('disabled'); // Habilitar la edición
+                otherMotivoInput.focus();
+            } else {
+                // Ocultar y quitar requerimiento al campo 'Otro Motivo'
+                otherMotivoInputGroup.classList.remove('visible');
+                otherMotivoInput.required = false;
+                otherMotivoInput.setAttribute('disabled', 'disabled'); // Deshabilitar
+                otherMotivoInput.value = ''; // Limpiar el valor para que no se envíe
+            }
+        }
+
+// Asegurarse de que el listener se aplique al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('input[name="motivo"]').forEach(radio => {
+                radio.addEventListener('change', handleMotivoChange);
+            });
+        });
+
+
+        // FUNCIÓN PARA MANEJAR LA LÓGICA DE EXCLUSIVIDAD DE LEUCOCITOS
+        function handleLeucocitosInput() {
+            const customInput = document.getElementById('otroLeucocitoValor');
+            const checkboxes = document.querySelectorAll('.leucocitos-section .leuco-option');
+
+            // Listener para los checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    // Si cualquier checkbox es marcado, borrar el input de texto
+                    if (checkbox.checked) {
+                        customInput.value = '';
+                        // Opcional: Desmarcar los otros checkboxes para forzar una única selección de rango.
+                        checkboxes.forEach(otherCheckbox => {
+                            if (otherCheckbox !== checkbox) {
+                                otherCheckbox.checked = false;
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Listener para el input de texto
+            customInput.addEventListener('input', () => {
+                // Si hay texto en el input, desmarcar todos los checkboxes
+                if (customInput.value.trim().length > 0) {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                }
+            });
+        }
+
+// *** IMPORTANTE: Asegúrate de llamar a esta función al cargar el DOM ***
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... [listeners existentes] ...
+
+            // [NUEVO LISTENER para Leucocitos]
+            handleLeucocitosInput();
+        });
+
+
+// FUNCIÓN PARA MANEJAR LA LÓGICA DE EXCLUSIVIDAD DE LEVADURAS
+        function handleLevadurasInput() {
+            const customInput = document.getElementById('otroLevaduraValor');
+            const radioButtons = document.querySelectorAll('.levaduras-section .levadura-option');
+
+            // Listener para los radio buttons
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    // Si cualquier radio button es seleccionado, borrar el input de texto
+                    if (radio.checked) {
+                        customInput.value = '';
+                    }
+                });
+            });
+
+            // Listener para el input de texto
+            customInput.addEventListener('input', () => {
+                // Si hay texto en el input, deseleccionar todos los radio buttons
+                if (customInput.value.trim().length > 0) {
+                    radioButtons.forEach(radio => {
+                        radio.checked = false;
+                    });
+                }
+            });
+        }
+
+// *** IMPORTANTE: Asegúrate de llamar a esta función al cargar el DOM ***
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... [listeners existentes] ...
+
+            // [NUEVO LISTENER para Levaduras]
+            handleLevadurasInput();
+        });
+
+        // FUNCIÓN PARA MANEJAR LA LÓGICA DE EXCLUSIVIDAD DE CÉLULAS EPITELIALES
+        function handleEpitelialesInput() {
+            const customInput = document.getElementById('otroEpitelialValor');
+            const radioButtons = document.querySelectorAll('.epiteliales-section .epitelial-option');
+
+            // Listener para los radio buttons
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    // Si cualquier radio button es seleccionado, borrar el input de texto
+                    if (radio.checked) {
+                        customInput.value = '';
+                    }
+                });
+            });
+
+            // Listener para el input de texto
+            customInput.addEventListener('input', () => {
+                // Si hay texto en el input, deseleccionar todos los radio buttons
+                if (customInput.value.trim().length > 0) {
+                    radioButtons.forEach(radio => {
+                        radio.checked = false;
+                    });
+                }
+            });
+        }
+
+// *** IMPORTANTE: Asegúrate de llamar a esta función al cargar el DOM ***
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... [listeners existentes] ...
+
+            // [NUEVO LISTENER para Células Epiteliales]
+            handleEpitelialesInput();
+        });
+
+        // FUNCIÓN PARA MANEJAR LA LÓGICA DE EXCLUSIVIDAD EN CULTIVO
+        function handleCultivoChange() {
+            const noResult = document.getElementById('cultivo9'); // No procede/ No se aísla candida
+            const allResults = document.querySelectorAll('.cultivo-section .cultivo-result:not(#cultivo9)'); // Todos los demás resultados
+
+            // Listener para el campo "No procede"
+            noResult.addEventListener('change', () => {
+                if (noResult.checked) {
+                    // Si se marca "No procede", desmarcar todos los demás
+                    allResults.forEach(checkbox => {
+                        checkbox.checked = false;
+                        checkbox.disabled = true; // Opcional: Deshabilitar el resto
+                    });
+                } else {
+                    // Si se desmarca "No procede", habilitar todos los demás
+                    allResults.forEach(checkbox => {
+                        checkbox.disabled = false;
+                    });
+                }
+            });
+
+            // Listener para los demás resultados (para desmarcar "No procede" si se marca un positivo)
+            allResults.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked && noResult.checked) {
+                        noResult.checked = false;
+                        // Al desmarcar noResult, se re-habilitan todos los demás automáticamente por el listener anterior
+                    }
+                });
+            });
+        }
+
+// *** IMPORTANTE: Asegúrate de llamar a esta función al cargar el DOM ***
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... [listeners existentes] ...
+
+            // [NUEVO LISTENER para Resultado Cultivo]
+            handleCultivoChange();
+        });
+
+
+
+// *** IMPORTANTE: Asegúrate de llamar a esta función al cargar el DOM ***
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... [listeners existentes] ...
+
+            // [NUEVO LISTENER para Recuento Hongos]
+            handleRecuentoHongosChange();
+        });
+        
+        
+        
+        
+         const INPUT_MAP = {
+                '1': { buttonId: 'uploadButton1', fileId: 'fileIdInput1', originalFileName: 'originalFileNameInput1',  feedback: 'feedback-message1' },
+                '2': { buttonId: 'uploadButton2', fileId: 'fileIdInput2', originalFileName: 'originalFileNameInput2',  feedback: 'feedback-message2' },
+                '3': { buttonId: 'uploadButton3', fileId: 'fileIdInput3', originalFileName: 'originalFileNameInput3',  feedback: 'feedback-message3' },
+                '4': { buttonId: 'uploadButton4', fileId: 'fileIdInput4', originalFileName: 'originalFileNameInput4',  feedback: 'feedback-message4' },
+                '5': { buttonId: 'uploadButton5', fileId: 'fileIdInput5', originalFileName: 'originalFileNameInput5',  feedback: 'feedback-message5' },
+                '6': { buttonId: 'uploadButton6', fileId: 'fileIdInput6', originalFileName: 'originalFileNameInput6',  feedback: 'feedback-message6' },
+                '7': { buttonId: 'uploadButton7', fileId: 'fileIdInput7', originalFileName: 'originalFileNameInput7',  feedback: 'feedback-message7' },
+                '8': { buttonId: 'uploadButton8', fileId: 'fileIdInput8', originalFileName: 'originalFileNameInput8',  feedback: 'feedback-message8' },
+                '9': { buttonId: 'uploadButton9', fileId: 'fileIdInput9', originalFileName: 'originalFileNameInput9',  feedback: 'feedback-message9' },
+                '10': { buttonId: 'uploadButton10', fileId: 'fileIdInput10', originalFileName: 'originalFileNameInput10',  feedback: 'feedback-message10' },
+                '11': { buttonId: 'uploadButton11', fileId: 'fileIdInput11', originalFileName: 'originalFileNameInput11',  feedback: 'feedback-message11' }
+            };
+            
+            function getElementRefs(suffix) {
+                const map = INPUT_MAP[suffix];
+                if (!map) {
+                     console.error(`Error: Mapeo no encontrado para el sufijo ${suffix}`);
+                     return null;
+                }
+                return {
+                    fileIdInput: document.getElementById(map.fileId),
+                    originalFileNameInput: document.getElementById(map.originalFileName),
+                    feedbackMessage: document.getElementById(map.feedback),
+                };
+            }
+
+            // --- LÓGICA CENTRALIZADA DE PREVISUALIZACIÓN DE IMAGEN CLIENTE (Mantenida) ---
+            function previewImage(event, previewId, placeholderId) {
+                const file = event.target.files[0];
+                const preview = document.getElementById(previewId);
+                const placeholder = document.getElementById(placeholderId);
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                    placeholder.style.display = 'block';
+                }
+            }
+            
+            // Función auxiliar para verificar sufijo (Actualizada para 1 a 11)
+            function isValidUploadSuffix(suffix) {
+                const num = parseInt(suffix);
+                return num >= 1 && num <= 11;
+            }
+
+            // --- HTMX EVENT HANDLERS ---
+            
+            // 1. Deshabilitar botones al inicio de la petición
+            htmx.on(document.body, 'htmx:beforeRequest', function(evt) {
+                const buttonId = evt.detail.elt.id;
+                
+                if (buttonId.startsWith('uploadButton')) {
+                    const suffix = buttonId.replace('uploadButton', ''); 
+                    
+                    if (isValidUploadSuffix(suffix)) { 
+                        const refs = getElementRefs(suffix);
+                        if (!refs || !refs.fileIdInput) return; 
+                        
+                        evt.detail.elt.disabled = true;
+                        
+                        // Limpiar campos de resultado
+                        refs.fileIdInput.value = '';
+                        refs.originalFileNameInput.value = '';
+                        refs.feedbackMessage.textContent = `Subiendo Imagen ${suffix}...`; 
+                    }
+                }
+                
+                if (buttonId === 'saveButton') {
+                    evt.detail.elt.disabled = true;
+                    const feedbackDiv = document.getElementById('save-feedback');
+                    feedbackDiv.innerHTML = "Guardando formulario, espere...";
+                    feedbackDiv.className = 'pending'; 
+                }
+            });
+
+            // 2. Habilitar botones al finalizar la petición (Mantenida)
+            htmx.on(document.body, 'htmx:afterRequest', function(evt) {
+                const buttonId = evt.detail.elt.id;
+                
+                if (buttonId.startsWith('uploadButton')) {
+                    evt.detail.elt.disabled = false;
+                }
+                
+                if (buttonId === 'saveButton') {
+                    const saveButton = document.getElementById('saveButton');
+                    if (saveButton) {
+                        saveButton.disabled = false;
+                    }
+                }
+            });
+
+            // 3. Manejo de Respuesta JSON (UPLOAD) - Asignación de valores
+            htmx.on(document.body, 'htmx:afterSettle', function(evt) {
+                const buttonId = evt.detail.elt.id;
+                const suffix = buttonId.replace('uploadButton', ''); 
+
+                if (buttonId.startsWith('uploadButton') && evt.detail.successful) {
+                    if (!isValidUploadSuffix(suffix)) return; 
+                    
+                    const refs = getElementRefs(suffix);
+                    if (!refs || !refs.fileIdInput) return; 
+
+                    const xhr = evt.detail.xhr;
+
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        
+                        refs.fileIdInput.value = response.fileId || '';
+                        refs.originalFileNameInput.value = response.originalFileName || '';
+                        refs.feedbackMessage.textContent = `✅ Carga ${suffix} exitosa.`;
+
+                    } catch (e) {
+                        refs.feedbackMessage.textContent = `❌ Error Carga ${suffix}: JSON inválido o incompleto.`;
+                        console.error(`Error al parsear JSON para carga ${suffix}:`, e);
+                    }
+                } else if (buttonId.startsWith('uploadButton') && !evt.detail.successful) {
+                    if (!isValidUploadSuffix(suffix)) return; 
+
+                    const refs = getElementRefs(suffix);
+                    if (!refs || !refs.fileIdInput) return; 
+                    refs.feedbackMessage.textContent = `❌ Error Carga ${suffix}. Código: ${evt.detail.xhr.status}`;
+                }
+            });
+            
+    </script>
+</html>`
+
+``

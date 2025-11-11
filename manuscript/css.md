@@ -6,6 +6,8 @@ Si deseas añadir tus propios estilos personalizados o incluir el archivo Bootst
 
 Crea una carpeta de recursos: Coloca tu archivo CSS (ej. estilos.css) dentro de la carpeta src/main/webapp/css/.
 
+![](resources/css/00.png)
+
 
 ```java
 Link link = new Link().rel("stylesheet").href(request.getContextPath() + "/css/estilos.css");
