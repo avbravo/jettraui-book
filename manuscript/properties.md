@@ -31,17 +31,18 @@ Para usarlo
 Integrarlo
 
 ```java
+
 @Override
 protected String init() {
 
-String message = jettraResourcesFiles.fromMessage("menubar.home");
-        System.out.println("\tmessages.properties <bar.home> " + message);
+   String message = jettraResourcesFiles.fromMessage("menubar.home");
+   System.out.println("\tmessages.properties <bar.home> " + message);
 
-        String core = jettraResourcesFiles.fromCore("button.add");
-        System.out.println("\tcore.properties<button.add> " + core);
+   String core = jettraResourcesFiles.fromCore("button.add");
+   System.out.println("\tcore.properties<button.add> " + core);
 
-        String configuration = jettraResourcesFiles.fromConfiguration("application.title");
-        System.out.println("\tconfiguration.properties<application.title> " + configuration);
+   String configuration = jettraResourcesFiles.fromConfiguration("application.title");
+   System.out.println("\tconfiguration.properties<application.title> " + configuration);
 }
 
 ```
