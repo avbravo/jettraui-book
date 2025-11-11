@@ -2,6 +2,8 @@
 
 Un inputRow genera componentes Flowbite para  [Tailwind CSS Input Field - Flowbite](https://flowbite.com/docs/forms/input-field/)
 
+Genera un elemento por fila compuesto de un Label y un Input
+
 ![](resources/inputRow/00.png)
 
 ```html
@@ -37,6 +39,10 @@ public InputRow(String label, String id, String name)
 public InputRow(String label, String id, String name, TypeInput typeInput)
 
 public InputRow(String label, String id, String name, TypeInput typeInput, Boolean required, Boolean readonly) 
+
+// Puedes pasar directemente los objetos
+
+public InputRow(Label label, Tag input)
 
 ```
 
@@ -81,6 +87,11 @@ Usando InputRow
 Sin usar InputRow
 
 ```java
+   String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+   String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+
+
+
   Form mainForm = new Form().id("mainForm")
     .add(new Div("mb-6")
                             .add(new Label("NHRC (Número de Historia Clínica)", labelClass, "nhrc"))
@@ -121,4 +132,33 @@ String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rou
                .add(new InputDate("fechaRegistro", "fechaRegistro", inputClass).required(Boolean.TRUE))
                 )
 
+```
+
+* Pasando los objetos directamente al InputRow asignando los css para label e inputText
+
+El InputRow tambien soporta que pases los objetos directamente.
+
+```java
+ String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+
+
+ Form mainForm = new Form().id("mainForm")
+   .add(new InputRow(
+                            new Label("Peso", labelClass, "peso"),
+                            new InputText("peso", "peso", inputClass).required(Boolean.TRUE)
+                    ));
+
+```
+
+
+* Pasar los objetos y obtener los css desde InputRowCss
+
+
+```java
+ Form mainForm = new Form().id("mainForm")
+           .add(new InputRow(
+                            new Label("Salud", InputRowCss.Label.css, "salud"),
+                            new InputText("salud", "salud", InputRowCss.Input.css).required(Boolean.TRUE)
+                    ));
 ```

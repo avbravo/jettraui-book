@@ -1,0 +1,30 @@
+# InputRowCss
+
+Contiene los css para label e input que se usan en los InputRow
+
+```java
+public enum InputRowCss {
+    Label("block mb-2 text-sm font-medium text-gray-900 dark:text-white"),
+    Input("bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500");
+    
+    
+    public final String css;
+
+    private InputRowCss(String css) {
+        this.css = css;
+    }
+}
+
+
+
+```
+
+
+```java
+ Form mainForm = new Form().id("mainForm")
+           .add(new InputRow(
+                            new Label("Salud", InputRowCss.Label.css, "salud"),
+                            new InputText("salud", "salud", InputRowCss.Input.css).required(Boolean.TRUE)
+                    ));
+```
+
