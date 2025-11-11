@@ -5,7 +5,9 @@ El grid se basa en [Tailwind CSS Input Field - Flowbite](https://flowbite.com/do
 ![](resources/grid/00.png)
 
 
-Define un elemento de dos columnas por fila. Observe que la seccion separada      <div class="mb-6"> aplica para ser usada con InputRow.
+Define un elemento de dos columnas por fila. 
+
+Observe que la seccion separada      <div class="mb-6"> aplica para ser usada con InputRow.
 
 
 ```html
@@ -64,25 +66,26 @@ Define un elemento de dos columnas por fila. Observe que la seccion separada    
 ```
 
 
-Se usa en conjunto con InputCol e InputColCss
+Se usa en conjunto con [GridCol](gridCol.md) e [GridColCss](gridColCss.md)
 
 
 Por ejemplo
 
 ```java
-   Grid grid = new Grid();
-            grid.add(
-                    new InputCol("Fecha de Registro2", "fechaRegistro2", "fechaRegistro2", TypeInput.DATE));
-            grid.add(
-                    new InputCol("Fecha de Registro3", "fechaRegistro3", "fechaRegistro3", TypeInput.DATE));
+Form mainForm = new Form().id("mainForm")
 
-            grid.add(new InputCol(
-                    new Label("Apellido", InputColCss.Label.css, "apellido"),
-                    new InputText("apellido", "apellido", InputColCss.Input.css).required(Boolean.TRUE)));
-            grid.add(new InputCol(
-                    new Label("Salario", InputColCss.Label.css, "salario"),
-                    new InputText("salario", "salario", InputColCss.Input.css).required(Boolean.TRUE)));
+Grid grid = new Grid();
+            grid.add(new GridCol("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE));
+            grid.add(new GridCol("Fecha de Registro3", "fechaRegistro3", "fechaRegistro3", TypeInput.DATE));
 
+            grid.add(new GridCol(
+                    new Label("Apellido", GridColCss.Label.css, "apellido"),
+                    new InputText("apellido", "apellido", GridColCss.Input.css).required(Boolean.TRUE)));
+            grid.add(new GridCol(
+                    new Label("Salario", GridColCss.Label.css, "salario"),
+                    new InputText("salario", "salario", GridColCss.Input.css).required(Boolean.TRUE)));
+
+            mainForm.add(grid);
 ```
 
 Genera

@@ -46,22 +46,13 @@ public InputRow(Label label, Tag input)
 
 ```
 
-El enum TypeInput posee los siguientes valores
-
-```java
-public enum TypeInput {
-   TEXT,NUMBER,PASSWORD,COLOR,DATE,EMAIL,FILE, HIDDEN,RADIO, RANGE,SEARCH,TIME
-}
-
-
-```
 
 
 
 
-* InputText
+* [InputText](inputText.md) Simple
 
- Genera una caja de texto para un numero de telefono
+ Genera una caja de texto. El para un numero de telefono
 
 ```java
 
@@ -73,7 +64,9 @@ public enum TypeInput {
 
 ![](resources/inputRow/01.png)
 
-* Text
+## Utilizando enum [TypeInput](typeInput.md) define los tipos de elementos de entrada
+
+* [InputText](inputText.md)
 
 Usando InputRow
 
@@ -83,24 +76,6 @@ Usando InputRow
 
 
 ```
-
-Sin usar InputRow
-
-```java
-   String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
-   String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
-
-
-
-  Form mainForm = new Form().id("mainForm")
-    .add(new Div("mb-6")
-                            .add(new Label("NHRC (Número de Historia Clínica)", labelClass, "nhrc"))
-                            .add(new InputText("nhrc", "nhrc", inputClass).required(Boolean.TRUE))
-                    )
-
-
-```
-
 
 
 
@@ -118,47 +93,68 @@ Sin usar InputRow
 ![](resources/inputRow/02.png)
 
 
-Sin usar InputRow lo haria de la siguiente manera
+* Pasar los objetos y obtener los css desde   [InputRowCss](inputRowCss.md).
+
+Debe indicar el componente Label y el Input correspondiente.
+
 
 ```java
- String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
-String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
-
-
  Form mainForm = new Form().id("mainForm")
-               .add(new InputRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
-               .add(new Div("mb-6")
-               .add(new Label("Fecha de Registro", labelClass, "fechaRegistro"))
-               .add(new InputDate("fechaRegistro", "fechaRegistro", inputClass).required(Boolean.TRUE))
-                )
-
+           .add(new InputRow(
+                    new Label("Salud", InputRowCss.Label.css, "salud"),
+                    new InputText("salud", "salud", InputRowCss.Input.css).required(Boolean.TRUE)
+                    ));
 ```
+
 
 * Pasando los objetos directamente al InputRow asignando los css para label e inputText
 
 El InputRow tambien soporta que pases los objetos directamente.
 
 ```java
- String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
 String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
-
 
  Form mainForm = new Form().id("mainForm")
    .add(new InputRow(
-                            new Label("Peso", labelClass, "peso"),
-                            new InputText("peso", "peso", inputClass).required(Boolean.TRUE)
+                     new Label("Peso", labelClass, "peso"),
+                     new InputText("peso", "peso", inputClass).required(Boolean.TRUE)
                     ));
 
 ```
 
 
-* Pasar los objetos y obtener los css desde InputRowCss
 
+
+---
+
+## Sin usar InputRow añadiendo directamente usando un Div
 
 ```java
+
+
+  Form mainForm = new Form().id("mainForm")
+    .add(new Div("mb-6")
+         .add(new Label("NHRC (Número de Historia Clínica)", GridColCss.Label.css, "nhrc"))
+         .add(new InputText("nhrc", "nhrc", GridColCss.Input.css).required(Boolean.TRUE))
+    )
+
+
+```
+
+
+Sin usar InputRow lo haria de la siguiente manera
+
+```java
+String labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+String inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+
+
  Form mainForm = new Form().id("mainForm")
-           .add(new InputRow(
-                            new Label("Salud", InputRowCss.Label.css, "salud"),
-                            new InputText("salud", "salud", InputRowCss.Input.css).required(Boolean.TRUE)
-                    ));
+        .add(new InputRow("Fecha de Registro", "fechaRegistro", "fechaRegistro", TypeInput.DATE))
+        .add(new Div("mb-6")
+        .add(new Label("Fecha de Registro", labelClass, "fechaRegistro"))
+        .add(new InputDate("fechaRegistro", "fechaRegistro", inputClass).required(Boolean.TRUE))
+        )
+
 ```
