@@ -22,8 +22,8 @@ Para usarlo
 
 ```java
 
-   @Inject
-    MotivoServices motivoServices;
+ @Inject
+ JettraResourcesFiles jettraResourcesFiles;
 
 
 ```
