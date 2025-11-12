@@ -175,10 +175,109 @@ mainForm.add(radioHelperSandia);
 
 
 ![](resources/radio/04.png)
-* Helper text #
-* Bordered 
-* Radio list group 
-* Horizontal list group
+
+## Bordered 
+
+Genera los elementos de radio con un borde
+
+```java
+RadioBorder radioBorderLimon = new RadioBorder()
+                    .add(new RadioItem("limon", "frutas", RadioBorderCss.Input.css).checked(Boolean.TRUE))
+                    .add(new Label("Limon", RadioBorderCss.Label.css, "limon"));
+RadioBorder radioBorderPapaya = new RadioBorder()
+    .add(new RadioItem("papaya", "frutas", RadioBorderCss.Input.css).checked(Boolean.TRUE))
+    .add(new Label("Papaya", RadioBorderCss.Label.css, "papaya"));
+
+mainForm.add(radioBorderLimon);
+mainForm.add(radioBorderPapaya);
+```
+
+![](resources/radio/05.png)
+
+
+## Radio List Group
+
+* Utilice **RadioListGroupHeader** se usa para añadir el texto.
+
+```java
+RadioListGroupHeader rlgh = new RadioListGroupHeader("Identificación");
+```
+
+* Cree una lista de RadioListGroupElement
+
+```java
+public record RadioListGroupElement(RadioItem radioItem,Label label ){
+
+}
+
+```
+
+Añadela al constructor de la clase
+
+```java
+RadioListGroup radioListIdentificacion = new RadioListGroup(radioListGroupElements);
+
+```
+
+
+
+
+* **Ejemplo**
+
+```java
+/**
+ * RadioList
+ */
+RadioListGroupHeader rlgh = new RadioListGroupHeader("Identificación");
+List<RadioListGroupElement> radioListGroupElements = new ArrayList<>();
+
+ radioListGroupElements.add(new RadioListGroupElement(
+        new RadioItem("cedula", "identificacion", RadioListGroupCss.Input.css),
+        new Label("Cedula", RadioListGroupCss.Label.css, "cedula")
+));
+   radioListGroupElements.add(new RadioListGroupElement(
+        new RadioItem("pasaporte", "identificacion", RadioListGroupCss.Input.css),
+        new Label("Pasaporte", RadioListGroupCss.Label.css, "pasaporte")
+));
+
+RadioListGroup radioListIdentificacion = new RadioListGroup(radioListGroupElements);
+
+
+```
+
+![](resources/radio/06.png)
+    
+
+# Horizontal list group
+
+Lista de grupo de radio horizontal
+
+```java
+
+/**
+ * RadioHorizontalListGroup
+ */
+RadioHorizontalListGroupHeader rhlghPais = new RadioHorizontalListGroupHeader("Pais");
+List<RadioListGroupElement> radioHorizontalListGroupElements = new ArrayList<>();
+
+radioHorizontalListGroupElements.add(new RadioListGroupElement(
+        new RadioItem("panama", "pais", RadioHorizontalListGroupCss.Input.css),
+        new Label("Panama", RadioHorizontalListGroupCss.Label.css, "cedula")
+));
+radioHorizontalListGroupElements.add(new RadioListGroupElement(
+        new RadioItem("colombia", "pais", RadioHorizontalListGroupCss.Input.css),
+        new Label("Colombia", RadioHorizontalListGroupCss.Label.css, "pasaporte")
+));
+
+RadioHorizontalListGroup radioHorizontalListIdentificacion = new RadioHorizontalListGroup(radioHorizontalListGroupElements);
+```
+
+![](resources/radio/06.png)
+
+
+## 
+
+
 * Radio in dropdown
 * Inline layout
 * Advanced layout
