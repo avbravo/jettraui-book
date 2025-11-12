@@ -277,6 +277,13 @@ RadioHorizontalListGroup radioHorizontalListIdentificacion = new RadioHorizontal
 
 ## Radio in dropdown
 
+Defina un boton que mostrara los elementos
+
+```java
+    RadioDropdownButton radioDropdownButton = new RadioDropdownButton("dropdownHelperRadioButton", "dropdownHelperRadio", "Dropdown radio");
+
+```
+
 
 * Radio in dropdown
 * Inline layout
