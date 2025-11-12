@@ -22,6 +22,13 @@ El método request.getContextPath() asegura que la ruta al archivo CSS sea corre
 Obtenga el contextPath del request y añada la ruta del archivo.
 
 ```java
+ String contextPath = request.getContextPath();
+ headers.add(new Link().rel("stylesheet").href(request.getContextPath() +"/css/microdetection.css"));
+```
+
+Ejemplo
+
+```java
 public class AnalisisView extends JettraView {
     // <editor-fold defaultstate="collapsed" desc="attributes()">
 
@@ -35,7 +42,7 @@ public class AnalisisView extends JettraView {
     protected String init() {
         webModelSession = webModelOfSession(request);
         String contextPath = request.getContextPath();
-        headers.add(new Tag("link").withAttribute("rel", "stylesheet").withAttribute("href", contextPath + "/css/microdetection.css"));
+        headers.add(new Link().rel("stylesheet").href(request.getContextPath() +"/css/microdetection.css"));
 
         return DashboardLayout.buildPage(
                 request,
