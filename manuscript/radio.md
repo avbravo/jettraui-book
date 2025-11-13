@@ -285,7 +285,47 @@ Defina un boton que mostrara los elementos
 ```
 
 
-* Radio in dropdown
+* Radio in dropdown (No funciona bien duplica los paneles)
+
+
+```java
+ /**
+             * Radio in dropdown
+             */
+            RadioDropdownButton radioDropdownButton = new RadioDropdownButton("dropdownHelperRadioButton", "dropdownHelperRadio", "Dropdown radio");
+
+            List<RadioListGroupElement> radioListGroupElementLenguajes = new ArrayList<>();
+
+            radioListGroupElementLenguajes.add(new RadioListGroupElement(
+                    new RadioItem("java", "lenguaje", RadioDropdownCss.Input.css),
+                    new Label("Java", RadioDropdownCss.Label.css, "java").setSubText("Creado por J. Gosling")
+            ));
+            radioListGroupElementLenguajes.add(new RadioListGroupElement(
+                    new RadioItem("c", "lenguaje", RadioDropdownCss.Input.css),
+                    new Label("C", RadioDropdownCss.Label.css, "lenguaje").setSubText("Inicio de todo")
+            ));
+
+            RadioDropdown radioDropdownLenguajes = new RadioDropdown("dropdownHelperRadio","dropdownHelperRadioButton", radioListGroupElementLenguajes);
+ Grid gridRadioDropdwon = new Grid();
+ gridRadioDropdwon.add(radioDropdownButton);
+ gridRadioDropdwon.add(radioDropdownLenguajes);
+
+
+```
+
+Genera
+![](resources/radio/08.png)
+
+Al dar clic en el boton
+![](resources/radio/09.png)
+
+**Nota:**
+
+Si observa aun no funciona bien se muestra duplicado y no en la posición exacta.
+
+
 * Inline layout
+
+
 * Advanced layout
 * Colors 
