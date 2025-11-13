@@ -272,7 +272,7 @@ radioHorizontalListGroupElements.add(new RadioListGroupElement(
 RadioHorizontalListGroup radioHorizontalListIdentificacion = new RadioHorizontalListGroup(radioHorizontalListGroupElements);
 ```
 
-![](resources/radio/06.png)
+![](resources/radio/07.png)
 
 
 ## Radio in dropdown
