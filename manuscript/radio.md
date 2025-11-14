@@ -1,14 +1,15 @@
 # Radio 
 
-Nos basarems en el componente [Tailwind CSS Radio - Flowbite](https://flowbite.com/docs/forms/radio/)
+Nos basarems en el componente [Tailwind CSS Radio - Flowbite](https://flowbite.com/docs/forms/radio)
+
+Elementos:
+
+* [RadioItem](radioitem.md)
+
 
 ## Usando Secciones Div con Dos Columnas
 
 En este ejemplo lo definimos mediante componentes [DIV](div.md), [RadioItem](radioitem.md), [Label](label.md), [RadioCss](radiocss.md)
-
-
-
-
 
 Para usar dos columnas necesita agregar el archivo radio.css al header , en la sección init
 
@@ -327,5 +328,13 @@ Si observa aun no funciona bien se muestra duplicado y no en la posición exacta
 * Inline layout
 
 
+Genera
+
+![](resources/radio09.png)
+
+ 
+
 * Advanced layout
+
+
 * Colors 
