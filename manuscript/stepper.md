@@ -11,26 +11,26 @@ Por ejemplo
 Se cuenta con un record, que recibe los valores a mostrar.
 
 ```java
-public record StepperData(String leftValue, String title, String subTitle, Boolean active  ) {
+public record StepperModel(String leftValue, String title, String subTitle, Boolean active  ) {
 
 }
 
 
 ```
 
-Para implementarlo en jettraui debemos pasar un List<StepperData>
+Para implementarlo en jettraui debemos pasar un List<StepperModel>
 
 
 
 
 
 ```java
-  List<StepperData> stepperDatas = new ArrayList<>();
+  List<StepperModel> stepperModels = new ArrayList<>();
            
- stepperDatas.add(new StepperData("1", "Motivo del Estudio", "Seleccione uno", Boolean.TRUE));
- stepperDatas.add(new StepperData("2", "Data", "Esto es", Boolean.FALSE));
+ stepperModels.add(new StepperModel("1", "Motivo del Estudio", "Seleccione uno", Boolean.TRUE));
+ stepperModels.add(new StepperModel("2", "Model", "Esto es", Boolean.FALSE));
  
- mainForm.add(new Stepper(stepperDatas));
+ mainForm.add(new Stepper(stepperModels));
 
 
 ```
